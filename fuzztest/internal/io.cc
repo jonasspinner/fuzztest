@@ -97,8 +97,8 @@ std::optional<std::string> ReadFile(absl::string_view path) {
     // Using stderr instead of GetStderr() to avoid initialization-order-fiasco
     // when reading files at static init time with
     // `.WithSeeds(fuzztest::ReadFilesFromDirectory(...))`.
-    absl::FPrintF(stderr, "[!] %s:%d: Error reading %s: (%d) %s\n",
-                  __FILE__, __LINE__, path, errno, strerror(errno));
+    absl::FPrintF(stderr, "[!] %s:%d: Error reading %s: (%d) %s\n", __FILE__,
+                  __LINE__, path, errno, strerror(errno));
     return std::nullopt;
   }
   std::stringstream buffer;
@@ -263,10 +263,12 @@ void ForEachSerializedInput(absl::Span<const std::string> file_paths,
                     result.message());
     }
   }
-  absl::FPrintF(
-      GetStderr(),
-      "[*] In total, loaded %d inputs and ignored %d invalid inputs.\n",
-      total_loaded_inputs, total_invalid_inputs);
+  if (total_loaded_inputs != 0) {
+    absl::FPrintF(
+        GetStderr(),
+        "[*] In total, loaded %d inputs and ignored %d invalid inputs.\n",
+        total_loaded_inputs, total_invalid_inputs);
+  }
 }
 
 }  // namespace fuzztest::internal
